@@ -9,22 +9,52 @@ import org.springframework.data.repository.CrudRepository;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskRepository extends CrudRepository<Task,Long> {
 
+
     @Query("""
-            SELECT t.id, t.title, tb.body_text AS body, t.status, t.zone_offset, t.creation_date,t.last_update_date, t.due_date
+            SELECT t.id,
+            t.title,
+            tb.body_text AS body,
+            t.status,t.zone_offset,
+            t.creation_date,
+            t.last_update_date,
+            t.due_date
+            FROM tasks AS t
+            INNER JOIN task_body AS tb
+            ON t.id = tb.id
+            WHERE t.id = :id
+            """)
+    Task findTaskById(Long id);
+
+    @Query("""
+            SELECT t.id,
+            t.title,
+            tb.body_text AS body,
+            t.status,
+            t.zone_offset,
+            t.creation_date,
+            t.last_update_date,
+            t.due_date
             FROM tasks AS t
             INNER JOIN task_body AS tb
             ON t.id = tb.id
             WHERE (:id IS NULL OR t.id = :id)
-            AND (:taskStatus IS NULL OR t.status = :taskStatus)
+            AND (:status IS NULL OR t.status = :status)
             AND (:year IS NULL OR YEAR(t.creation_date) = :year)
             AND (:dayOfWeek IS NULL OR DAYNAME(t.creation_date) = :dayOfWeek)
             AND (:date1 IS NULL OR t.creation_date >= :date1)
             AND (:date2 IS NULL OR t.creation_date < :date2)
             """)
-    List<Task> findTasks(Long id, TaskStatus taskStatus, Integer year, DayOfWeek dayOfWeek, LocalDateTime date1, LocalDateTime date2);
+    List<Task> findTasks(Long id,
+                         TaskStatus status,
+                         Integer year,
+                         DayOfWeek dayOfWeek,
+                         LocalDateTime date1,
+                         LocalDateTime date2
+    );
 
     @Modifying
     @Query("""
@@ -57,8 +87,34 @@ public interface TaskRepository extends CrudRepository<Task,Long> {
     @Modifying
     @Query("""
             INSERT INTO task_body (id, body_text)
-            VALUES (LAST_INSERT_ID(), :body);
+            VALUES (LAST_INSERT_ID(), :body)
             """)
     void insertTaskBody(String body);
+
+    @Modifying
+    @Query("""
+            UPDATE tasks
+            SET
+            title = :title,
+            status = :status,
+            last_update_date = :lastUpdateDate,
+            due_date = :dueDate
+            WHERE id = :id
+            """)
+    void updateTask(Long id,
+                    String title,
+                    TaskStatus status,
+                    LocalDateTime lastUpdateDate,
+                    LocalDateTime dueDate
+    );
+
+    @Modifying
+    @Query("""
+            UPDATE task_body
+            SET
+            body_text = :body
+            WHERE id = :id
+            """)
+    void updateBody(Long id, String body);
 
 }

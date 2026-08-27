@@ -32,6 +32,16 @@ public class TaskController {
         return taskMgrService.findTasks(id,taskStatus,year,dayOfWeek,date1,date2);
     }
 
+    @PatchMapping
+    public void updateTask(@RequestParam Long id,
+                           @RequestParam(required = false) String title,
+                           @RequestParam(required = false) String body,
+                           @RequestParam(required = false) TaskStatus status,
+                           @RequestParam(required = false) LocalDateTime dueDate) {
+
+        taskMgrService.updateTask(id, title, body, status, dueDate);
+    }
+
     @PostMapping
     public void createTask(@RequestBody TaskDto dto) {
 

@@ -1,6 +1,7 @@
 package com.italo.task_api.service;
 
 import com.italo.task_api.enums.TaskStatus;
+import com.italo.task_api.exception.ResourceNotFoundException;
 import com.italo.task_api.model.Task;
 import com.italo.task_api.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -40,6 +42,33 @@ public class TaskManagementService {
                 startDateTime,
                 endDateTime
         );
+    }
+
+    public void updateTask(Long id,
+                           String title,
+                           String body,
+                           TaskStatus status,
+                           LocalDateTime dueDate) {
+
+        Task toUpdate = taskRepo.findTaskById(id);
+
+        if(toUpdate != null){
+
+            LocalDateTime lastUpdateDate = LocalDateTime.now();
+
+            taskRepo.updateTask(
+                    id,
+                    (!Objects.equals(title, "")) ? title : toUpdate.getTitle(),
+                    (status != null) ? status : toUpdate.getStatus(),
+                    lastUpdateDate,
+                    dueDate
+            );
+
+            taskRepo.updateBody(id,body);
+            return;
+        }
+
+        throw  new ResourceNotFoundException("Theres no such entry in the database with Id: " + id);
     }
 
     public void create(Task task) {
