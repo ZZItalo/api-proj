@@ -1,24 +1,35 @@
 package com.italo.task_api.controller;
 
 import com.italo.task_api.dto.TaskDto;
+import com.italo.task_api.enums.TaskStatus;
 import com.italo.task_api.model.Task;
 import com.italo.task_api.service.TaskManagementService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/task")
 public class TaskController {
 
-    private final TaskManagementService taskMgrSrvc;
+    private final TaskManagementService taskMgrService;
 
-    public TaskController(TaskManagementService taskMgrSrvc) {
-        this.taskMgrSrvc = taskMgrSrvc;
+    public TaskController(TaskManagementService taskMgrService) {
+        this.taskMgrService = taskMgrService;
+    }
+
+    @GetMapping
+    public List<Task> findTasks(@RequestParam(required = false) Long id,
+                                  @RequestParam(required = false) TaskStatus taskStatus,
+                                  @RequestParam(required = false) Integer year,
+                                  @RequestParam(required = false) DayOfWeek dayOfWeek,
+                                  @RequestParam(required = false) LocalDate date1,
+                                  @RequestParam(required = false) LocalDate date2) {
+
+        return taskMgrService.findTasks(id,taskStatus,year,dayOfWeek,date1,date2);
     }
 
     @PostMapping
@@ -34,6 +45,6 @@ public class TaskController {
                 .dueDate(dto.getDueDate())
                 .build();
 
-        taskMgrSrvc.create(task);
+        taskMgrService.create(task);
     }
 }
