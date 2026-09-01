@@ -20,7 +20,7 @@ public interface TaskRepository extends CrudRepository<Task,Long> {
             t.creation_date,
             t.last_update_date,
             t.due_date
-            FROM tasks2 AS t
+            FROM tasks AS t
             WHERE (:status IS NULL OR t.status = :status)
             AND (:year IS NULL OR YEAR(t.creation_date) = :year)
             AND (:dayOfWeek IS NULL OR DAYNAME(t.creation_date) = :dayOfWeek)

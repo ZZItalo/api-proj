@@ -62,12 +62,12 @@ public class TaskManagementService {
         Task t = new Task.Builder()
                 .id(toUpdate.getId())
                 .title(isTitleNullOrEmpty ? toUpdate.getTitle() : title)
-                .body(body)
+                .body((body==null) ? toUpdate.getBody() : body)
                 .status((status == null) ? toUpdate.getStatus() : status)
                 .zoneOffset(toUpdate.getZoneOffset())
                 .creationDate(toUpdate.getCreationDate())
                 .lastUpdateDate(LocalDateTime.now())
-                .dueDate(dueDate)
+                .dueDate((dueDate == null) ? toUpdate.getDueDate() : dueDate)
                 .build();
 
         return taskRepo.save(t);
