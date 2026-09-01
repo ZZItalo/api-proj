@@ -41,15 +41,13 @@ public interface TaskRepository extends CrudRepository<Task,Long> {
             FROM tasks AS t
             INNER JOIN task_body AS tb
             ON t.id = tb.id
-            WHERE (:id IS NULL OR t.id = :id)
-            AND (:status IS NULL OR t.status = :status)
+            WHERE (:status IS NULL OR t.status = :status)
             AND (:year IS NULL OR YEAR(t.creation_date) = :year)
             AND (:dayOfWeek IS NULL OR DAYNAME(t.creation_date) = :dayOfWeek)
             AND (:date1 IS NULL OR t.creation_date >= :date1)
             AND (:date2 IS NULL OR t.creation_date < :date2)
             """)
-    List<Task> findTasks(Long id,
-                         TaskStatus status,
+    List<Task> findTasks(TaskStatus status,
                          Integer year,
                          DayOfWeek dayOfWeek,
                          LocalDateTime date1,

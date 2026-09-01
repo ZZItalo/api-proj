@@ -24,19 +24,22 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Task> findTask(@PathVariable Long id) {
+
         Task t = taskMgrService.findTasks(id);
+
         return ResponseEntity.ok().body(t);
     }
 
     @GetMapping
-    public List<Task> findTasks(@RequestParam(required = false) Long id,
-                                  @RequestParam(required = false) TaskStatus taskStatus,
+    public ResponseEntity<List<Task>> findTasks(@RequestParam(required = false) TaskStatus taskStatus,
                                   @RequestParam(required = false) Integer year,
                                   @RequestParam(required = false) DayOfWeek dayOfWeek,
                                   @RequestParam(required = false) LocalDate date1,
                                   @RequestParam(required = false) LocalDate date2) {
 
-        return taskMgrService.findTasks(id,taskStatus,year,dayOfWeek,date1,date2);
+        List<Task> lt =  taskMgrService.findTasks(taskStatus,year,dayOfWeek,date1,date2);
+
+        return ResponseEntity.ok().body(lt);
     }
 
     @PatchMapping

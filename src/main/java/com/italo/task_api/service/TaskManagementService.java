@@ -28,8 +28,7 @@ public class TaskManagementService {
         return taskRepo.findTaskById(id);
     }
 
-    public List<Task> findTasks(Long id,
-                                TaskStatus taskStatus,
+    public List<Task> findTasks(TaskStatus taskStatus,
                                 Integer year,
                                 DayOfWeek dayOfWeek,
                                 LocalDate date1,
@@ -39,7 +38,7 @@ public class TaskManagementService {
 
         LocalDateTime endDateTime = (date2 != null) ? date2.plusDays(1).atStartOfDay() : null;
 
-        return taskRepo.findTasks(id,
+        return taskRepo.findTasks(
                 taskStatus,
                 year,
                 dayOfWeek,
