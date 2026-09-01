@@ -4,6 +4,7 @@ import com.italo.task_api.dto.TaskDto;
 import com.italo.task_api.enums.TaskStatus;
 import com.italo.task_api.model.Task;
 import com.italo.task_api.service.TaskManagementService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
@@ -19,6 +20,12 @@ public class TaskController {
 
     public TaskController(TaskManagementService taskMgrService) {
         this.taskMgrService = taskMgrService;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> findTask(@PathVariable Long id) {
+        Task t = taskMgrService.findTasks(id);
+        return ResponseEntity.ok().body(t);
     }
 
     @GetMapping

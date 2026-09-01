@@ -24,6 +24,10 @@ public class TaskManagementService {
         this.taskRepo = taskRepo;
     }
 
+    public Task findTasks(Long id) {
+        return taskRepo.findTaskById(id);
+    }
+
     public List<Task> findTasks(Long id,
                                 TaskStatus taskStatus,
                                 Integer year,
