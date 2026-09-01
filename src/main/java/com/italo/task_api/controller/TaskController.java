@@ -6,7 +6,9 @@ import com.italo.task_api.model.Task;
 import com.italo.task_api.service.TaskManagementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,9 +25,9 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> findTask(@PathVariable Long id) {
+    public ResponseEntity<Task> findTaskById(@PathVariable Long id) {
 
-        Task t = taskMgrService.findTasks(id);
+        Task t = taskMgrService.findTaskById(id);
 
         return ResponseEntity.ok().body(t);
     }
@@ -43,17 +45,19 @@ public class TaskController {
     }
 
     @PatchMapping
-    public void updateTask(@RequestParam Long id,
-                           @RequestParam(required = false) String title,
-                           @RequestParam(required = false) String body,
-                           @RequestParam(required = false) TaskStatus status,
-                           @RequestParam(required = false) LocalDateTime dueDate) {
+    public ResponseEntity<Task> updateTask(@RequestParam Long id,
+                                           @RequestParam(required = false) String title,
+                                           @RequestParam(required = false) String body,
+                                           @RequestParam(required = false) TaskStatus status,
+                                           @RequestParam(required = false) LocalDateTime dueDate) {
 
-        taskMgrService.updateTask(id, title, body, status, dueDate);
+        Task t = taskMgrService.updateTask(id, title, body, status, dueDate);
+
+        return ResponseEntity.ok().body(t);
     }
 
     @PostMapping
-    public void createTask(@RequestBody TaskDto dto) {
+    public ResponseEntity<Task> createTask(@RequestBody TaskDto dto) {
 
         Task task = new Task.Builder()
                 .title(dto.getTitle())
@@ -65,6 +69,21 @@ public class TaskController {
                 .dueDate(dto.getDueDate())
                 .build();
 
-        taskMgrService.create(task);
+        Long id = taskMgrService.createTask(task);
+
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
+
+        return ResponseEntity.created(uri).body(task);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteTaskById(@RequestParam Long id) {
+
+        taskMgrService.deleteTask(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -11,8 +11,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-
 
 @Service
 @Transactional
@@ -24,8 +22,10 @@ public class TaskManagementService {
         this.taskRepo = taskRepo;
     }
 
-    public Task findTasks(Long id) {
-        return taskRepo.findTaskById(id);
+    public Task findTaskById(Long id) {
+        return taskRepo.findById(id).orElseThrow(
+                ()-> new ResourceNotFoundException("Theres no such entry in the database with Id: " + id)
+        );
     }
 
     public List<Task> findTasks(TaskStatus taskStatus,
@@ -47,44 +47,39 @@ public class TaskManagementService {
         );
     }
 
-    public void updateTask(Long id,
+    public Task updateTask(Long id,
                            String title,
                            String body,
                            TaskStatus status,
                            LocalDateTime dueDate) {
 
-        Task toUpdate = taskRepo.findTaskById(id);
-
-        if(toUpdate != null){
-
-            LocalDateTime lastUpdateDate = LocalDateTime.now();
-
-            taskRepo.updateTask(
-                    id,
-                    (!Objects.equals(title, "")) ? title : toUpdate.getTitle(),
-                    (status != null) ? status : toUpdate.getStatus(),
-                    lastUpdateDate,
-                    dueDate
-            );
-
-            taskRepo.updateBody(id,body);
-            return;
-        }
-
-        throw  new ResourceNotFoundException("Theres no such entry in the database with Id: " + id);
-    }
-
-    public void create(Task task) {
-
-        taskRepo.insertTask(
-                task.getTitle(),
-                task.getStatus(),
-                task.getZoneOffset().toString(),
-                task.getCreationDate(),
-                task.getLastUpdateDate(),
-                task.getDueDate()
+        Task toUpdate = taskRepo.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Theres no such entry in the database with Id: " + id)
         );
 
-        taskRepo.insertTaskBody(task.getBody());
+        boolean isTitleNullOrEmpty = (title == null) || title.isEmpty();
+
+        Task t = new Task.Builder()
+                .id(toUpdate.getId())
+                .title(isTitleNullOrEmpty ? toUpdate.getTitle() : title)
+                .body(body)
+                .status((status == null) ? toUpdate.getStatus() : status)
+                .zoneOffset(toUpdate.getZoneOffset())
+                .creationDate(toUpdate.getCreationDate())
+                .lastUpdateDate(LocalDateTime.now())
+                .dueDate(dueDate)
+                .build();
+
+        return taskRepo.save(t);
+    }
+
+    public Long createTask(Task task) {
+
+        return taskRepo.save(task).getId();
+    }
+
+    public void deleteTask(Long id) {
+
+        taskRepo.deleteById(id);
     }
 }

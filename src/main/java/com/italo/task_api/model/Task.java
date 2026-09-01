@@ -3,10 +3,12 @@ package com.italo.task_api.model;
 import com.italo.task_api.enums.TaskStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+@Table("tasks2")
 public class Task {
 
     @Id

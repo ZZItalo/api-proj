@@ -2,45 +2,25 @@ package com.italo.task_api.repository;
 
 import com.italo.task_api.enums.TaskStatus;
 import com.italo.task_api.model.Task;
-import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface TaskRepository extends CrudRepository<Task,Long> {
 
-
     @Query("""
             SELECT t.id,
             t.title,
-            tb.body_text AS body,
-            t.status,t.zone_offset,
-            t.creation_date,
-            t.last_update_date,
-            t.due_date
-            FROM tasks AS t
-            INNER JOIN task_body AS tb
-            ON t.id = tb.id
-            WHERE t.id = :id
-            """)
-    Task findTaskById(Long id);
-
-    @Query("""
-            SELECT t.id,
-            t.title,
-            tb.body_text AS body,
+            t.body,
             t.status,
             t.zone_offset,
             t.creation_date,
             t.last_update_date,
             t.due_date
-            FROM tasks AS t
-            INNER JOIN task_body AS tb
-            ON t.id = tb.id
+            FROM tasks2 AS t
             WHERE (:status IS NULL OR t.status = :status)
             AND (:year IS NULL OR YEAR(t.creation_date) = :year)
             AND (:dayOfWeek IS NULL OR DAYNAME(t.creation_date) = :dayOfWeek)
@@ -53,66 +33,4 @@ public interface TaskRepository extends CrudRepository<Task,Long> {
                          LocalDateTime date1,
                          LocalDateTime date2
     );
-
-    @Modifying
-    @Query("""
-            INSERT INTO tasks (
-            title,
-            status,
-            zone_offset,
-            creation_date,
-            last_update_date,
-            due_date
-            )
-            VALUES (
-            :title,
-            :status,
-            :zoneOffset,
-            :creationDate,
-            :lastUpdateDate,
-            :dueDate
-            );
-            """)
-    void insertTask(
-            String title,
-            TaskStatus status,
-            String zoneOffset,
-            LocalDateTime creationDate,
-            LocalDateTime lastUpdateDate,
-            LocalDateTime dueDate
-    );
-
-    @Modifying
-    @Query("""
-            INSERT INTO task_body (id, body_text)
-            VALUES (LAST_INSERT_ID(), :body)
-            """)
-    void insertTaskBody(String body);
-
-    @Modifying
-    @Query("""
-            UPDATE tasks
-            SET
-            title = :title,
-            status = :status,
-            last_update_date = :lastUpdateDate,
-            due_date = :dueDate
-            WHERE id = :id
-            """)
-    void updateTask(Long id,
-                    String title,
-                    TaskStatus status,
-                    LocalDateTime lastUpdateDate,
-                    LocalDateTime dueDate
-    );
-
-    @Modifying
-    @Query("""
-            UPDATE task_body
-            SET
-            body_text = :body
-            WHERE id = :id
-            """)
-    void updateBody(Long id, String body);
-
 }
