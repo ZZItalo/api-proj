@@ -8,7 +8,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-@Table("tasks2")
+@Table("tasks")
 public class Task {
 
     @Id
