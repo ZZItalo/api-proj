@@ -24,7 +24,7 @@ public class TaskManagementService {
 
     public Task findTaskById(Long id) {
         return taskRepo.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("Theres no such entry in the database with Id: " + id)
+                ()-> new ResourceNotFoundException("Resource with ID: " + id + " does not exist.")
         );
     }
 
@@ -54,7 +54,8 @@ public class TaskManagementService {
                            LocalDateTime dueDate) {
 
         Task toUpdate = taskRepo.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Theres no such entry in the database with Id: " + id)
+                () -> new ResourceNotFoundException("Cannot Update: Resource with ID: " + id +
+                                                    " does not exist.")
         );
 
         boolean isTitleNullOrEmpty = (title == null) || title.isEmpty();
