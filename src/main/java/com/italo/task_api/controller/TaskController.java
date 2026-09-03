@@ -4,6 +4,7 @@ import com.italo.task_api.dto.TaskDto;
 import com.italo.task_api.enums.TaskStatus;
 import com.italo.task_api.model.Task;
 import com.italo.task_api.service.TaskManagementService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -57,7 +58,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody TaskDto dto) {
+    public ResponseEntity<Task> createTask(@RequestBody @Valid TaskDto dto) {
 
         Task task = new Task.Builder()
                 .title(dto.getTitle())

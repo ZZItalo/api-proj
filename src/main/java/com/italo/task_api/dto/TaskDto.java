@@ -1,15 +1,22 @@
 package com.italo.task_api.dto;
 
 import com.italo.task_api.enums.TaskStatus;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 public class TaskDto {
 
+    @NotBlank(message = "Title can not be null or empty.")
     private String title;
     private String body;
+
+    @NotNull
     private TaskStatus status;
+
+    @NotNull
     private ZoneOffset zoneOffset;
     private LocalDateTime dueDate;
 

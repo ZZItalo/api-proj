@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDetailsDto> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException exception) {
 
-        ErrorDetailsDto errorDetailsDto = new ErrorDetailsDto();
+        ErrorDetailsDto errorDetails = new ErrorDetailsDto();
 
         String msg = "The API could not accept the request because its "
                 +"request body can not be read or converted to a "
@@ -34,8 +34,8 @@ public class GlobalExceptionHandler {
                 +"syntax (missing commas, unclosed brackets, etc), "
                 +"data type mismatches, invalid enum values, etc.";
 
-        errorDetailsDto.setMessage(msg);
+        errorDetails.setMessage(msg);
 
-        return ResponseEntity.badRequest().body(errorDetailsDto);
+        return ResponseEntity.badRequest().body(errorDetails);
     }
 }
