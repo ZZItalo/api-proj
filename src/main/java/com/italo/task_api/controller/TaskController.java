@@ -70,12 +70,13 @@ public class TaskController {
                 .dueDate(dto.getDueDate())
                 .build();
 
-        Long id = taskMgrService.createTask(task);
+        // Returns the created instance with an ID
+        task = taskMgrService.createTask(task);
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(id)
+                .buildAndExpand(task.getId())
                 .toUri();
 
         return ResponseEntity.created(uri).body(task);

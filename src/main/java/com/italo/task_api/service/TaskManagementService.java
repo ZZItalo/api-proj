@@ -74,9 +74,9 @@ public class TaskManagementService {
         return taskRepo.save(t);
     }
 
-    public Long createTask(Task task) {
+    public Task createTask(Task task) {
 
-        return taskRepo.save(task).getId();
+        return taskRepo.save(task);
     }
 
     public void deleteTask(Long id) {
