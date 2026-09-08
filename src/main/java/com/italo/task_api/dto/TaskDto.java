@@ -9,14 +9,14 @@ import java.time.ZoneOffset;
 
 public class TaskDto {
 
-    @NotBlank(message = "Title can not be null or empty.")
+    @NotBlank(message = "Title can not be null or empty")
     private String title;
     private String body;
 
-    @NotNull
+    @NotNull(message = "The status of a task can not be empty")
     private TaskStatus status;
 
-    @NotNull
+    @NotNull(message = "The zone offset can not be empty")
     private ZoneOffset zoneOffset;
     private LocalDateTime dueDate;
 

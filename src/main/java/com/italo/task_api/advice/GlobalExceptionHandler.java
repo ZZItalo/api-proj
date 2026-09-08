@@ -5,6 +5,8 @@ import com.italo.task_api.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -33,6 +35,30 @@ public class GlobalExceptionHandler {
                 +"Java object. Try checking for: Malformed JSON "
                 +"syntax (missing commas, unclosed brackets, etc), "
                 +"data type mismatches, invalid enum values, etc.";
+
+        errorDetails.setMessage(msg);
+
+        return ResponseEntity.badRequest().body(errorDetails);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDetailsDto> handlerMethodArgumentNotValidException(
+            MethodArgumentNotValidException exception) {
+
+        ErrorDetailsDto errorDetails = new ErrorDetailsDto();
+
+        StringBuilder sb = new StringBuilder();
+        for(ObjectError ex : exception.getBindingResult().getAllErrors()) {
+            if(ex.getDefaultMessage() != null){
+
+                if(!sb.isEmpty()){
+                    sb.append(", ");
+                }
+                sb.append(ex.getDefaultMessage());
+            }
+        }
+
+        String msg = sb.toString();
 
         errorDetails.setMessage(msg);
 
